@@ -33,6 +33,10 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="main.cpp" />
+		<Unit filename="psfont.cpp" />
+		<Unit filename="psfont.h" />
+		<Unit filename="rawfont.cpp" />
+		<Unit filename="rawfont.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

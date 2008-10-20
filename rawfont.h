@@ -1,31 +1,22 @@
 #ifndef RAWFONT_H
 #define RAWFONT_H
 
-#include <wx/file.h>
-class RawFont
+#include"fontbase.h"
+#include<string>
+#include<fstream>
+using namespace std;
+
+
+class RawFont:public fontbase
 {
 public:
-    RawFont(wxString fontName);
+    RawFont(string fontName);
     virtual ~RawFont();
-    bool Initialize(wxString fontName);
-    bool IsOk() {return m_psfOk; };
-    wxString GetFontName() { return m_fontName; };
-    unsigned int GetFontLength(){ return m_length;};
-    unsigned int GetFontCharSize(){ return m_charsize;};
-    unsigned int GetFontHeight(){ return m_height;};
-    unsigned int GetFontWidth(){ return m_width;};
-    wxString GetFontInformation();
-    unsigned char * GetFontPattern(unsigned int charCode,int Count = 1);
+    bool Initialize(string fontName);
+
 protected:
 private:
-    wxString m_fontName;
-    wxFile   m_fontFile;
-    bool     m_psfOk;
-    unsigned int  m_headersize;
-    unsigned int  m_length;
-    unsigned int  m_charsize;
-    unsigned int  m_height;
-    unsigned int  m_width;
+
 };
 
 #endif // RAWFONT_H

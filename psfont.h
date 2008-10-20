@@ -27,37 +27,21 @@
 #define PSF2_SEPARATOR  0xFF
 #define PSF2_STARTSEQ   0xFE
 
-#include <wx/file.h>
-class PSFont
+#include"fontbase.h"
+#include<string>
+#include<fstream>
+using namespace std;
+
+class PSFont:public fontbase
 {
 public:
-    PSFont(wxString fontName);
+    PSFont(string fontName);
     virtual ~PSFont();
-    bool Initialize(wxString fontName);
-    bool IsOk() {return m_psfOk; };
-    wxString GetFontName() { return m_fontName; };
-    unsigned int GetFontLength(){ return m_length;};
-    unsigned int GetFontCharSize(){ return m_charsize;};
-    unsigned int GetFontHeight(){ return m_height;};
-    unsigned int GetFontWidth(){ return m_width;};
-
-    wxString GetFontInformation();
-    unsigned char * GetFontPattern(unsigned int charCode,int Count = 1);
+    bool Initialize(string fontName);
 
 protected:
 private:
-    wxString m_fontName;
-    wxFile   m_fontFile;
-    bool     m_psfOk;
-    //unsigned char m_magic[4];
-    unsigned int  m_magic;
-    unsigned int  m_version;
-    unsigned int  m_headersize;
-    unsigned int  m_flags;
-    unsigned int  m_length;
-    unsigned int  m_charsize;
-    unsigned int  m_height;
-    unsigned int  m_width;
+
 };
 
 #endif // PSFONT_H
