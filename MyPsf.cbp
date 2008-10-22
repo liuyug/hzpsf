@@ -32,11 +32,15 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="fontbase.cpp" />
+		<Unit filename="fontbase.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="psfont.cpp" />
 		<Unit filename="psfont.h" />
 		<Unit filename="rawfont.cpp" />
 		<Unit filename="rawfont.h" />
+		<Unit filename="rawhzfont.cpp" />
+		<Unit filename="rawhzfont.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

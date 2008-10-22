@@ -3,22 +3,24 @@
 #include "psfont.h"
 #include <sstream>
 
-
-PSFont::PSFont(string fontName):fontbase(fontName)
+PSFont::PSFont():fontbase()
 {
 
+}
+PSFont::PSFont(string fontName):fontbase(fontName)
+{
+    Initialize(fontName);
 }
 
 PSFont::~PSFont()
 {
     //dtor
 }
-bool PSFont::Initialize(string fontName)
+bool PSFont::do_init()
 {
-    m_psfOk=false;
-    m_fontName=fontName;
-    m_fontFile.open(m_fontName.c_str(),ios::in | ios::out);
-    if(m_fontFile.is_open()) {
+
+    m_fontFile.open(m_fontName.c_str(),ios::in |ios::binary);
+    if(!m_fontFile.is_open()) {
         return m_psfOk;
     }
     m_fontFile.read((char*)&m_magic,4);
@@ -52,6 +54,28 @@ bool PSFont::Initialize(string fontName)
     return m_psfOk;
 }
 
+bool PSFont::do_create()
+{
+    m_fontFile.open(m_fontName.c_str(),ios::out|ios::binary);
+    if(!m_fontFile.is_open()) {
+        return m_psfOk;
+    }
+    m_version=0;
+    m_flags=0;
+    m_psfOk=true;
+    m_headersize=0;
+
+    m_charsize = 16;
+    m_height = 16;
+    m_width = 8;
+    m_length = 256;
+    return m_psfOk;
+}
+
+bool PSFont::do_putheader()
+{
+    return true;
+}
 
 
 

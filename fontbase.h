@@ -3,13 +3,20 @@
 
 #include<string>
 #include<fstream>
+
 using namespace std;
+
+
+
 class fontbase
 {
 public:
+    fontbase();
     fontbase(string fontName);
     virtual ~fontbase();
-    virtual bool Initialize(string fontName);
+    bool Initialize(string fontName);
+    bool Create(string fontName);
+
     bool IsOk() {return m_psfOk; };
     string GetFontName() { return m_fontName; };
     unsigned int GetFontLength(){ return m_length;};
@@ -18,9 +25,18 @@ public:
     unsigned int GetFontWidth(){ return m_width;};
 
     virtual string GetFontInformation();
-    unsigned char * GetFontPattern(unsigned int charCode,int Count = 1);
+    virtual bool   PutHeaderInformation();
+    virtual unsigned char * GetFontPattern(int charCode,int Count = 1);
+    virtual unsigned char * GetFontPattern(char *hzCode,int Count = 1);
+    bool            PutFontPattern(unsigned char *charPattern,int Count = 1);
+    bool            SkipChar(int skip);
     long long GetFileLength();
+private:
+    virtual bool do_init() = 0;
+    virtual bool do_create() = 0;
+    virtual bool do_putheader() = 0;
 protected:
+    unsigned char * m_fontPattern;
     string  m_fontName;
     fstream m_fontFile;
     bool    m_psfOk;

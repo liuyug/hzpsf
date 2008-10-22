@@ -35,10 +35,13 @@ using namespace std;
 class PSFont:public fontbase
 {
 public:
+    PSFont();
     PSFont(string fontName);
     virtual ~PSFont();
-    bool Initialize(string fontName);
-
+private:
+    bool do_init();
+    bool do_create();
+    bool do_putheader();
 protected:
 private:
 
