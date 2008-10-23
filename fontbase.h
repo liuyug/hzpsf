@@ -25,11 +25,11 @@ public:
     unsigned int GetFontWidth(){ return m_width;};
 
     virtual string GetFontInformation();
-    virtual bool   PutHeaderInformation();
-    virtual unsigned char * GetFontPattern(int charCode,int Count = 1);
-    virtual unsigned char * GetFontPattern(char *hzCode,int Count = 1);
+    virtual bool    PutHeader();
     bool            PutFontPattern(unsigned char *charPattern,int Count = 1);
-    bool            SkipChar(int skip);
+    virtual unsigned char * GetFontPattern(int charCode,int Count = 1);
+    virtual unsigned char * GetFontPattern(const char *hzCode,int Count = 1,bool transform = false);
+
     long long GetFileLength();
 private:
     virtual bool do_init() = 0;

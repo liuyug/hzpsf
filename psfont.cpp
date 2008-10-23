@@ -2,7 +2,7 @@
 
 #include "psfont.h"
 #include <sstream>
-
+#include <iostream>
 PSFont::PSFont():fontbase()
 {
 
@@ -56,10 +56,11 @@ bool PSFont::do_init()
 
 bool PSFont::do_create()
 {
-    m_fontFile.open(m_fontName.c_str(),ios::out|ios::binary);
+    m_fontFile.open(m_fontName.c_str(),ios::out|ios::trunc|ios::binary);
     if(!m_fontFile.is_open()) {
         return m_psfOk;
     }
+
     m_version=0;
     m_flags=0;
     m_psfOk=true;
@@ -74,6 +75,9 @@ bool PSFont::do_create()
 
 bool PSFont::do_putheader()
 {
+    // PSF1
+    m_magic=PSF1_MAGIC+(0x10L<<24);
+    m_fontFile.write((char*)&m_magic,4);
     return true;
 }
 

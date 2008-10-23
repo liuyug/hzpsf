@@ -7,16 +7,19 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output=".\MyPsf" prefix_auto="1" extension_auto="1" />
+				<Option output=".\hzpsf" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj\Debug\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
+				<Linker>
+					<Add library="boost_program_options-mgw34-mt" />
+				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output=".\MyPsf" prefix_auto="1" extension_auto="1" />
+				<Option output=".\hzpsf" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj\Release\" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -25,13 +28,20 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add option="-static" />
+					<Add library="C:\MinGW\boost_1_36_0\lib\libboost_program_options-mgw34-mt.lib" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
+			<Add option="-I$(boost)\include" />
+			<Add directory="$(#boost)" />
 		</Compiler>
+		<Linker>
+			<Add directory="$(#boost)\lib" />
+		</Linker>
 		<Unit filename="fontbase.cpp" />
 		<Unit filename="fontbase.h" />
 		<Unit filename="main.cpp" />

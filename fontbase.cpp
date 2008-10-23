@@ -15,7 +15,7 @@ fontbase::fontbase(string fontName)
 fontbase::~fontbase()
 {
     m_fontFile.close();
-    if(m_fontPattern!=NULL) delete m_fontPattern;
+    if(m_fontPattern!=NULL) delete[] m_fontPattern;
 }
 bool fontbase::Initialize(string fontName)
 {
@@ -59,10 +59,6 @@ string fontbase::GetFontInformation()
         ("\nWidth:")<<m_width;
     return fontInfo.str();
 }
-bool   fontbase::PutHeaderInformation()
-{
-    return do_putheader();
-}
 
 long long fontbase::GetFileLength()
 {
@@ -77,35 +73,37 @@ unsigned char * fontbase::GetFontPattern(int charCode,int Count)
 {
     ios::pos_type pos;
     pos=m_headersize+charCode*m_charsize;
-    if(m_fontPattern!=NULL) delete m_fontPattern;
+    if(m_fontPattern!=NULL) delete[] m_fontPattern;
     m_fontPattern=new unsigned char[m_charsize*Count];
     m_fontFile.seekg(pos);
     m_fontFile.read((char*)m_fontPattern,m_charsize*Count);
 
     return m_fontPattern;
 }
-unsigned char * fontbase::GetFontPattern(char *hzCode,int Count)
+unsigned char * fontbase::GetFontPattern(const char *hzCode,int Count,bool transform)
 {
     ios::pos_type pos;
-    if(m_fontPattern!=NULL) delete m_fontPattern;
+    if(m_fontPattern!=NULL) delete[] m_fontPattern;
     m_fontPattern=new unsigned char[m_charsize*Count];
-    unsigned char *m_fontPatterntemp=new unsigned char[m_charsize];
+    unsigned char *fontPatterntemp=new unsigned char[m_charsize];
 
     for(int i=0;i<Count;i++){
         pos=m_headersize+(((hzCode[i*2+0]&0xff)-0xA1)*94+(hzCode[i*2+1]&0xff)-0xA1)*m_charsize;
         m_fontFile.seekg(pos);
-        m_fontFile.read((char*)m_fontPatterntemp,m_charsize);
-        for(unsigned int j=0,k=0;j<m_charsize;j+=2,k++){
-            *(m_fontPattern+i*m_charsize+k)=*(m_fontPatterntemp+j);
-            *(m_fontPattern+i*m_charsize+16+k)=*(m_fontPatterntemp+j+1);
-        }
+        m_fontFile.read((char*)fontPatterntemp,m_charsize);
+        if(transform)
+            for(unsigned int j=0,k=0;j<m_charsize;j+=2,k++){
+                *(m_fontPattern+i*m_charsize+k)=*(fontPatterntemp+j);
+                *(m_fontPattern+i*m_charsize+16+k)=*(fontPatterntemp+j+1);
+            }
+        else memcpy(m_fontPattern,fontPatterntemp,m_charsize);
     }
-    delete m_fontPatterntemp;
+    delete[] fontPatterntemp;
     return m_fontPattern;
 }
-bool fontbase::SkipChar(int skip)
+bool   fontbase::PutHeader()
 {
-    m_fontFile.seekg(skip*m_charsize,ios::cur);
+    return do_putheader();
 }
 
 bool fontbase::PutFontPattern(unsigned char *charPattern,int Count)

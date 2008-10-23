@@ -1,43 +1,150 @@
-#include <iostream>
+#include<iostream>
+#include<cstdio>
+#include<string>
+
+#include<boost/program_options.hpp>
 
 #include"psfont.h"
 #include"rawfont.h"
 #include"rawhzfont.h"
 using namespace std;
+namespace po = boost::program_options;
 
-int main()
+void Translate(string & line,string &asciiTable,string & hzTable,unsigned char baseChar)
 {
-    cout << "Hello world!" << endl;
-//    PSFont psf;
-//    psf.Initialize("Linux16.psf");
-//    cout<<psf.GetFontInformation()<<endl;
+    string hz;
+    string::size_type pos;
+    if(line.length()<2) return;
 
-    RawFont raw;
-    raw.Initialize("asc16.raw");
-    RawHzFont hzRaw;
-    hzRaw.Initialize("hzk16");
-    RawFont myraw;
-    myraw.Create("myraw.raw");
+    for(unsigned int i=0;i<line.length()-1;i++){
+        if((line[i]&0xff)>0xA1&&(line[i+1]&0xff)>0xA1){  // chinese
+            hz=line.substr(i,2);
+            pos=hzTable.find(hz);
+            if(pos==string::npos){   // add new chinese
+                pos=hzTable.length();
+                hzTable+=hz;
+            }
+            line.replace(i,2,asciiTable.substr(baseChar+pos,2));
+            i++;
+        }
+    }
+}
+int main(int argc,char *argv[])
+{
+    string englishFont,chineseFont,consoleFont;
+    string inputFile,outputFile;
+    try{
+        string usage="\
+HZPSF 1.00   Copyright (c) 2008 Liu Yugang   20 Oct 2008\n\n\
+Usage: HZPSF <options>";
+        po::options_description desc("Allowed options");
+        desc.add_options()
+            ("help,h", "this message")
+            ("english-font,e", po::value<string>(), "input english font(f16 or psf)")
+            ("chinese-font,z", po::value<string>(), "input chinese font(chinese dot font)")
+            ("console-font,c", po::value<string>(), "output console font(f16 or psf)")
+            ("input-file,i", po::value<string>(), "input config file")
+            ("output-file,o", po::value<string>(), "output config file")
+            ;
 
-    int count=0;
-    myraw.PutFontPattern(raw.GetFontPattern(0,130),130);
-    count+=128;
-    myraw.PutFontPattern(hzRaw.GetFontPattern("我爱北京天安门\
-    我爱北京天安门\
-    我爱北京天安门\
-    我爱北京天安门\
-    我爱北京天安门\
-    我爱北京天安门\
-    我爱北京天安门\
-    我爱北京天安门\
-    我爱北京天安门\
-    ",63),126);
-    cout<<"char:";
-    for(int i=count;i<count+126;i++)
-        printf("%c",i);
-    cout<<"||"<<endl;
+        po::variables_map vm;
+        po::store(po::parse_command_line(argc, argv, desc), vm);
+        po::notify(vm);
 
+        if (vm.count("help")) {
+            cerr <<usage<<endl;
+            cerr << desc << "\n";
+            return 1;
+        }
 
+        if (vm.count("english-font")) englishFont=vm["english-font"].as<string>(); //cout << "english-font:"<<vm["english-font"].as<string>() << endl;
+        if (vm.count("chinese-font")) chineseFont=vm["chinese-font"].as<string>(); //cout << "chinese-font:"<<vm["chinese-font"].as<string>() << endl;
+        if (vm.count("console-font")) consoleFont=vm["console-font"].as<string>();
+        if (vm.count("input-file")) inputFile=vm["input-file"].as<string>(); //cout << "input-file:"<<vm["input-file"].as<string>() << endl;
+        if (vm.count("output-file")) outputFile=vm["output-file"].as<string>(); //cout << "output-file:"<<vm["output-file"].as<string>() << endl;
+        if (englishFont.empty()||chineseFont.empty()||inputFile.empty()||outputFile.empty()||consoleFont.empty()){
+            cerr <<usage<<endl;
+            cerr << desc << "\n";
+            return 1;
+        }
+    }catch(exception& e) {
+        cerr << "error: " << e.what() << "\n";
+        return 1;
+    }catch(...) {
+        cerr << "Exception of unknown type!\n";
+        return 1;
+    }
+    string ascii;
+    for(int k=0;k<256;k++)
+        ascii+=k;
+    // translate config file
+    ifstream inFile(inputFile.c_str(),ios::in);
+    if(!inFile.is_open()) {
+        cerr<<"Can't open input file:"<<inputFile<<endl;
+        return 1;
+    }
+    ofstream outFile(outputFile.c_str(),ios::out|ios::trunc);
+    if(!outFile.is_open()) {
+        cerr<<"Can't open output file:"<<outputFile<<endl;
+        return 1;
+    }
+    string line;
+    string hzTable;
+    unsigned char baseChar=128;
+    int linenum=0;
+    while(getline(inFile,line)){
+        linenum++;
+        cout<<"Line "<<linenum<<":"<<line<<endl;
+        Translate(line,ascii,hzTable,baseChar);
+        outFile<<line<<endl;
+        cout<<"Line "<<linenum<<":"<<line<<endl;
+    }
+
+    cout<<"Chinese table:"<<hzTable<<endl;
+    cout<<"Chinese words number:"<<hzTable.length()<<endl;
+    if(hzTable.length()>64){
+        cerr<<"Chinese words are more than 64 ! Quit..."<<endl;
+        return 1;
+    }
+    inFile.close();
+    outFile.close();
+    // make console font
+
+    fontbase * enFont,*conFont;
+    string ext=englishFont.substr(englishFont.rfind(".")+1);
+    if(ext=="psf"||ext=="PSF"){
+        enFont=new PSFont();
+    }else
+    if(ext=="f16"||ext=="F16"){
+        enFont=new RawFont();
+    }else {
+        cerr<<englishFont<<":Unknown font type!"<<endl;
+        return 1;
+    }
+    ext=consoleFont.substr(consoleFont.rfind(".")+1);
+    if(ext=="psf"||ext=="PSF"){
+        conFont=new PSFont();
+    }else
+    if(ext=="f16"||ext=="F16"){
+        conFont=new RawFont();
+    }else {
+        cerr<<consoleFont<<":Unknown font type!"<<endl;
+        return 1;
+    }
+
+    enFont->Initialize(englishFont);
+    RawHzFont zhFont;
+    zhFont.Initialize(chineseFont);
+
+    conFont->Create(consoleFont);
+    conFont->PutHeader();
+    conFont->PutFontPattern(enFont->GetFontPattern(0,128),128);
+    conFont->PutFontPattern(zhFont.GetFontPattern(hzTable.c_str(),hzTable.length()/2,true),hzTable.length());
+    int k=256-baseChar-hzTable.length();
+    conFont->PutFontPattern(enFont->GetFontPattern(baseChar+hzTable.length(),k),k);
+    cout<<"Output config file:"<<outputFile<<endl;
+    cout<<"Output console font:"<<consoleFont<<endl;
+    cout<<"Make console font and config file successfully!"<<endl;
 
     return 0;
 }
