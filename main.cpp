@@ -18,11 +18,20 @@ void Translate(string & line,string &asciiTable,string & hzTable,unsigned char b
 
     for(unsigned int i=0;i<line.length()-1;i++){
         if((line[i]&0xff)>0xA1&&(line[i+1]&0xff)>0xA1){  // chinese
+            pos=0;
             hz=line.substr(i,2);
-            pos=hzTable.find(hz);
-            if(pos==string::npos){   // add new chinese
-                pos=hzTable.length();
-                hzTable+=hz;
+            while(1){
+                pos=hzTable.find(hz,pos);
+                if(pos==string::npos) { // add new chinese
+                    pos=hzTable.length();
+                    hzTable+=hz;
+                    break;
+                }
+                if(pos%2==1) {
+                    pos++;
+                    continue;      // find
+                }
+                break;
             }
             line.replace(i,2,asciiTable.substr(baseChar+pos,2));
             i++;
@@ -31,6 +40,7 @@ void Translate(string & line,string &asciiTable,string & hzTable,unsigned char b
 }
 int main(int argc,char *argv[])
 {
+
     string englishFont,chineseFont,consoleFont;
     string inputFile,outputFile;
     try{
@@ -92,6 +102,7 @@ Usage: HZPSF <options>";
     string hzTable;
     unsigned char baseChar=128;
     int linenum=0;
+
     while(getline(inFile,line)){
         linenum++;
         cout<<"Line "<<linenum<<":"<<line<<endl;
@@ -102,7 +113,7 @@ Usage: HZPSF <options>";
 
     cout<<"Chinese table:"<<hzTable<<endl;
     cout<<"Chinese words number:"<<hzTable.length()<<endl;
-    if(hzTable.length()>64){
+    if(hzTable.length()>128){
         cerr<<"Chinese words are more than 64 ! Quit..."<<endl;
         return 1;
     }
