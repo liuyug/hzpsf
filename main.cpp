@@ -45,7 +45,7 @@ int main(int argc,char *argv[])
     string inputFile,outputFile;
     try{
         string usage="\
-HZPSF 1.00   Copyright (c) 2008 Liu Yugang   20 Oct 2008\n\n\
+HZPSF 1.01   Copyright (c) 2008 Liu Yugang   20 Oct 2008\n\n\
 Usage: HZPSF <options>";
         po::options_description desc("Allowed options");
         desc.add_options()
@@ -112,7 +112,7 @@ Usage: HZPSF <options>";
     }
 
     cout<<"Chinese table:"<<hzTable<<endl;
-    cout<<"Chinese words number:"<<hzTable.length()<<endl;
+    cout<<"Chinese words number:"<<hzTable.length()/2<<endl;
     if(hzTable.length()>128){
         cerr<<"Chinese words are more than 64 ! Quit..."<<endl;
         return 1;
@@ -129,8 +129,10 @@ Usage: HZPSF <options>";
     if(ext=="f16"||ext=="F16"){
         enFont=new RawFont();
     }else {
-        cerr<<englishFont<<":Unknown font type!"<<endl;
-        return 1;
+        enFont=new RawFont();
+        cout<<englishFont<<":Use default type f16!"<<endl;
+        //cerr<<englishFont<<":Unknown font type!"<<endl;
+        //return 1;
     }
     ext=consoleFont.substr(consoleFont.rfind(".")+1);
     if(ext=="psf"||ext=="PSF"){
@@ -139,8 +141,10 @@ Usage: HZPSF <options>";
     if(ext=="f16"||ext=="F16"){
         conFont=new RawFont();
     }else {
-        cerr<<consoleFont<<":Unknown font type!"<<endl;
-        return 1;
+        conFont=new RawFont();
+        cout<<consoleFont<<":Use default type f16!"<<endl;
+        //cerr<<consoleFont<<":Unknown font type!"<<endl;
+        //return 1;
     }
 
     enFont->Initialize(englishFont);
