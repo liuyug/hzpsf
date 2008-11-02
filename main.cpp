@@ -17,7 +17,7 @@ void Translate(string & line,string &asciiTable,string & hzTable,unsigned char b
     if(line.length()<2) return;
 
     for(unsigned int i=0;i<line.length()-1;i++){
-        if((line[i]&0xff)>0xA1&&(line[i+1]&0xff)>0xA1){  // chinese
+        if((line[i]&0xff)>=0xA1&&(line[i+1]&0xff)>=0xA1){  // chinese
             pos=0;
             hz=line.substr(i,2);
             while(1){
@@ -45,7 +45,7 @@ int main(int argc,char *argv[])
     string inputFile,outputFile;
     try{
         string usage="\
-HZPSF 1.01   Copyright (c) 2008 Liu Yugang   20 Oct 2008\n\n\
+HZPSF 1.02   Copyright (c) 2008 Liu Yugang   20 Oct 2008\n\n\
 Usage: HZPSF <options>";
         po::options_description desc("Allowed options");
         desc.add_options()
@@ -102,6 +102,12 @@ Usage: HZPSF <options>";
     string hzTable;
     unsigned char baseChar=128;
     int linenum=0;
+//    debug:
+//    line="秒后自动启按编辑选项实用";
+//    cout<<"Line "<<linenum<<":"<<line<<endl;
+//    Translate(line,ascii,hzTable,baseChar);
+//    cout<<"Line "<<linenum<<":"<<line<<endl;
+//    return 1;
 
     while(getline(inFile,line)){
         linenum++;
