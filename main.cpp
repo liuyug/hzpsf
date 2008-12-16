@@ -75,11 +75,11 @@ Usage: HZPSF <options>";
         if (vm.count("input-file")) inputFile=vm["input-file"].as<string>(); //cout << "input-file:"<<vm["input-file"].as<string>() << endl;
         if (vm.count("output-file")) outputFile=vm["output-file"].as<string>(); //cout << "output-file:"<<vm["output-file"].as<string>() << endl;
         // debug:
-        englishFont="fonts\\greek.f16";
-        chineseFont="fonts\\hzk16";
-        consoleFont="hzfont.psf";
-        inputFile="slax_zh.cfg";
-        outputFile="slax.cfg";
+//        englishFont="fonts\\greek.f16";
+//        chineseFont="fonts\\hzk16";
+//        consoleFont="hzfont.psf";
+//        inputFile="slax_zh.cfg";
+//        outputFile="slax.cfg";
         //
         if (englishFont.empty()||chineseFont.empty()||inputFile.empty()||outputFile.empty()||consoleFont.empty()){
             cerr <<usage<<endl;
