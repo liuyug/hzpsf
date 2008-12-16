@@ -77,7 +77,9 @@ unsigned char * fontbase::GetFontPattern(int charCode,int Count)
     m_fontPattern=new unsigned char[m_charsize*Count];
     m_fontFile.seekg(pos);
     m_fontFile.read((char*)m_fontPattern,m_charsize*Count);
-
+    if(!m_fontFile) {
+        cerr<<"read error!\n";
+    }
     return m_fontPattern;
 }
 unsigned char * fontbase::GetFontPattern(const char *hzCode,int Count,bool transform)
@@ -91,6 +93,9 @@ unsigned char * fontbase::GetFontPattern(const char *hzCode,int Count,bool trans
         pos=m_headersize+(((hzCode[i*2+0]&0xff)-0xA1)*94+(hzCode[i*2+1]&0xff)-0xA1)*m_charsize;
         m_fontFile.seekg(pos);
         m_fontFile.read((char*)fontPatterntemp,m_charsize);
+        if(!m_fontFile) {
+            cerr<<"read error!\n";
+        }
         if(transform)
             for(unsigned int j=0,k=0;j<m_charsize;j+=2,k++){
                 *(m_fontPattern+i*m_charsize+k)=*(fontPatterntemp+j);
@@ -108,7 +113,14 @@ bool   fontbase::PutHeader()
 
 bool fontbase::PutFontPattern(unsigned char *charPattern,int Count)
 {
+
     m_fontFile.write((char*)charPattern,m_charsize*Count);
+    if(!m_fontFile) {
+        cerr<<"write error!\n";
+        return false;
+    }
+    //m_fontFile.flush();
+
     return true;
 }
 

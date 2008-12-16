@@ -33,7 +33,7 @@ int Translate(string & line,string &asciiTable,string & hzTable,unsigned char ba
                 }
                 break;
             }
-            if(pos>127) continue;  // 汉字字数过多，继续执行，统计汉字总个数
+            if(pos>128) continue;  // 汉字字数过多，继续执行，统计汉字总个数
             line.replace(i,2,asciiTable.substr(baseChar+pos,2));
             i++;
         }
@@ -175,6 +175,7 @@ Usage: HZPSF <options>";
     cout<<"Output config file:"<<outputFile<<endl;
     cout<<"Output console font:"<<consoleFont<<endl;
     cout<<"Make console font and config file successfully!"<<endl;
-
+    delete conFont;
+    delete enFont;
     return 0;
 }
