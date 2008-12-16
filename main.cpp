@@ -10,11 +10,11 @@
 using namespace std;
 namespace po = boost::program_options;
 
-void Translate(string & line,string &asciiTable,string & hzTable,unsigned char baseChar)
+int Translate(string & line,string &asciiTable,string & hzTable,unsigned char baseChar)
 {
     string hz;
     string::size_type pos;
-    if(line.length()<2) return;
+    if(line.length()<2) return 0;
 
     for(unsigned int i=0;i<line.length()-1;i++){
         if((line[i]&0xff)>=0xA1&&(line[i+1]&0xff)>=0xA1){  // chinese
@@ -33,10 +33,12 @@ void Translate(string & line,string &asciiTable,string & hzTable,unsigned char b
                 }
                 break;
             }
+            if(pos>127) continue;  // 汉字字数过多，继续执行，统计汉字总个数
             line.replace(i,2,asciiTable.substr(baseChar+pos,2));
             i++;
         }
     }
+    return 0;
 }
 int main(int argc,char *argv[])
 {
@@ -72,6 +74,13 @@ Usage: HZPSF <options>";
         if (vm.count("console-font")) consoleFont=vm["console-font"].as<string>();
         if (vm.count("input-file")) inputFile=vm["input-file"].as<string>(); //cout << "input-file:"<<vm["input-file"].as<string>() << endl;
         if (vm.count("output-file")) outputFile=vm["output-file"].as<string>(); //cout << "output-file:"<<vm["output-file"].as<string>() << endl;
+        // debug:
+        englishFont="fonts\\greek.f16";
+        chineseFont="fonts\\hzk16";
+        consoleFont="hzfont.psf";
+        inputFile="slax_zh.cfg";
+        outputFile="slax.cfg";
+        //
         if (englishFont.empty()||chineseFont.empty()||inputFile.empty()||outputFile.empty()||consoleFont.empty()){
             cerr <<usage<<endl;
             cerr << desc << "\n";
@@ -103,7 +112,7 @@ Usage: HZPSF <options>";
     unsigned char baseChar=128;
     int linenum=0;
 //    debug:
-//    line="秒后自动启按编辑选项实用";
+//    line="MENU LABEL Memtest 内存测试";
 //    cout<<"Line "<<linenum<<":"<<line<<endl;
 //    Translate(line,ascii,hzTable,baseChar);
 //    cout<<"Line "<<linenum<<":"<<line<<endl;
