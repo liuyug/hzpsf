@@ -2,11 +2,14 @@
 #include<cstdio>
 #include<string>
 
+
 #include<boost/program_options.hpp>
 
 #include"psfont.h"
 #include"rawfont.h"
 #include"rawhzfont.h"
+#include"version.h"
+
 using namespace std;
 namespace po = boost::program_options;
 
@@ -45,10 +48,12 @@ int main(int argc,char *argv[])
 
     string englishFont,chineseFont,consoleFont;
     string inputFile,outputFile;
+    string prog_info="HZPSF "+string(AutoVersion::FULLVERSION_STRING)+"\nCopyright (c) 2008 Liu Yugang "+ \
+    string(AutoVersion::YEAR)+"-"+string(AutoVersion::MONTH)+"-"+string(AutoVersion::DATE)+"\n\n";
+    cout<<prog_info;
     try{
-        string usage="\
-HZPSF 1.02   Copyright (c) 2008 Liu Yugang   20 Oct 2008\n\n\
-Usage: HZPSF <options>";
+        string usage="Usage: HZPSF <options>\n";
+
         po::options_description desc("Allowed options");
         desc.add_options()
             ("help,h", "this message")
@@ -64,7 +69,7 @@ Usage: HZPSF <options>";
         po::notify(vm);
 
         if (vm.count("help")) {
-            cerr <<usage<<endl;
+            cerr <<usage;
             cerr << desc << "\n";
             return 1;
         }
