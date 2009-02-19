@@ -36,7 +36,7 @@ int Translate(string & line,string &asciiTable,string & hzTable,unsigned char ba
                 }
                 break;
             }
-            if(pos>128) continue;  // ºº×Ö×ÖÊý¹ý¶à£¬¼ÌÐøÖ´ÐÐ£¬Í³¼Æºº×Ö×Ü¸öÊý
+            if(pos>128) continue;  // æ±‰å­—å­—æ•°è¿‡å¤šï¼Œç»§ç»­æ‰§è¡Œï¼Œç»Ÿè®¡æ±‰å­—æ€»ä¸ªæ•°
             line.replace(i,2,asciiTable.substr(baseChar+pos,2));
             i++;
         }
@@ -117,7 +117,7 @@ int main(int argc,char *argv[])
     unsigned char baseChar=128;
     int linenum=0;
 //    debug:
-//    line="MENU LABEL Memtest ÄÚ´æ²âÊÔ";
+//    line="MENU LABEL Memtest å†…å­˜æµ‹è¯•";
 //    cout<<"Line "<<linenum<<":"<<line<<endl;
 //    Translate(line,ascii,hzTable,baseChar);
 //    cout<<"Line "<<linenum<<":"<<line<<endl;
