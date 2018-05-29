@@ -1,6 +1,7 @@
 #include "fontbase.h"
 #include <sstream>
 #include <iostream>
+#include <string.h>
 
 fontbase::fontbase()
 {

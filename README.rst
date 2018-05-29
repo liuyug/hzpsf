@@ -45,3 +45,18 @@ HZPSF 功能：
     hzpsf -e swiss.f16 -z hzk16 -c myfont.psf -i menu_zh.lst -o menu.lst
 
 
+编译::
+
+    mkdir build
+    cd build
+    cmake ../
+    make
+
+Note::
+
+    + 需要安装 boost 库
+
+      ```apt install libboost-program-options-dev```
+
+    + 需要安装 cmake
+
